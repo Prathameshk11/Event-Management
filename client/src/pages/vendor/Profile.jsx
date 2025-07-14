@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { PencilIcon } from "@heroicons/react/24/outline"
-import axios from "axios"
+import API from "../../api/axios"
 import { useAuth } from "../../context/AuthContext"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
@@ -39,7 +39,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("/api/vendor/profile")
+        const response = await API.get("/api/vendor/profile")
 
         setFormData({
           name: response.data.name || "",
@@ -115,7 +115,7 @@ const Profile = () => {
     setSaving(true)
 
     try {
-      const response = await axios.put("/api/vendor/profile", formData)
+      const response = await API.put("/api/vendor/profile", formData)
 
       // Update auth context with new user data
       updateProfile(response.data)
@@ -139,7 +139,7 @@ const Profile = () => {
       const formData = new FormData()
       formData.append("image", file)
 
-      const response = await axios.post("/api/uploads/profile-image", formData, {
+      const response = await API.post("/api/uploads/profile-image", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

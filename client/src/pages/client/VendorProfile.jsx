@@ -2,7 +2,7 @@
 
 import { CalendarIcon, ChatBubbleLeftIcon, MapPinIcon, StarIcon } from "@heroicons/react/24/outline"
 import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid"
-import axios from "axios"
+import API from "../../api/axios"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-hot-toast"
 import { Link, useParams } from "react-router-dom"
@@ -66,22 +66,22 @@ const VendorProfile = () => {
     const fetchVendorData = async () => {
       try {
         // Fetch vendor details
-        const vendorResponse = await axios.get(`/api/vendors/${id}`)
+        const vendorResponse = await API.get(`/api/vendors/${id}`)
         setVendor(vendorResponse.data)
         console.log('Portfolio:', vendorResponse.data?.portfolio || 'No portfolio available');
         console.log("Vendor data:", vendorResponse.data)
 
         // Fetch client's events for booking form
-        const eventsResponse = await axios.get("/api/events")
+        const eventsResponse = await API.get("/api/events")
         setEvents(eventsResponse.data)
 
         // Fetch vendor's availability
-        const availabilityResponse = await axios.get(`/api/vendors/${id}/availability`)
+        const availabilityResponse = await API.get(`/api/vendors/${id}/availability`)
         setAvailability(availabilityResponse.data)
 
         // Fetch chat history if any
         if (socket) {
-          const chatResponse = await axios.get(`/api/chat/${id}`)
+          const chatResponse = await API.get(`/api/chat/${id}`)
           setMessages(chatResponse.data)
         }
       } catch (err) {
@@ -173,7 +173,7 @@ const VendorProfile = () => {
     setIsSubmitting(true)
 
     try {
-      await axios.post("/api/bookings", {
+      await API.post("/api/bookings", {
         vendorId: id,
         eventId: selectedEvent,
         date: selectedDate,

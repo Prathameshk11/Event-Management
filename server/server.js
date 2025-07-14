@@ -1,57 +1,75 @@
-const express = require("express")
-const mongoose = require("mongoose")
-const cors = require("cors")
-const http = require("http")
-const socketIo = require("socket.io")
-const dotenv = require("dotenv")
-const path = require("path")
-const cookieParser = require("cookie-parser")
-const morgan = require("morgan")
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const http = require("http");
+const socketIo = require("socket.io");
+const dotenv = require("dotenv");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 
 // Load environment variables
-dotenv.config()
+dotenv.config();
 
 // Import routes
-const authRoutes = require("./routes/auth")
-const userRoutes = require("./routes/users")
-const eventRoutes = require("./routes/events")
-const vendorRoutes = require("./routes/vendors")
-const bookingRoutes = require("./routes/bookings")
-const chatRoutes = require("./routes/chat")
-const uploadRoutes = require("./routes/uploads")
-const notificationRoutes = require("./routes/notifications")
+const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/users");
+const eventRoutes = require("./routes/events");
+const vendorRoutes = require("./routes/vendors");
+const bookingRoutes = require("./routes/bookings");
+const chatRoutes = require("./routes/chat");
+const uploadRoutes = require("./routes/uploads");
+const notificationRoutes = require("./routes/notifications");
 
 // Import middleware
-const { authenticateToken } = require("./middleware/auth")
+const { authenticateToken } = require("./middleware/auth");
 
 // Create Express app
-const app = express()
-const server = http.createServer(app)
+const app = express();
+const server = http.createServer(app);
+
+// Allow multiple origins
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173"
+];
+
+// CORS Middleware
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
+app.use(morgan("dev"));
+
+// Static files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Set up Socket.io
 const io = socketIo(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
     credentials: true,
     allowedHeaders: ["Authorization"],
-  },
-  transports: ["websocket", "polling"],
-})
-
-// Middleware
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
-  }),
-)
-app.use(express.json())
-app.use(cookieParser())
-app.use(morgan("dev"))
-
-// Static files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+    transports: ["websocket", "polling"],
+  }
+});
 
 // Socket.io middleware
 io.use((socket, next) => {

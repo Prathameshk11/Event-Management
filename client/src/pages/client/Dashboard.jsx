@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 import { PlusIcon, CalendarIcon, UserGroupIcon } from "@heroicons/react/24/outline"
 import { useAuth } from "../../context/AuthContext"
 import { useSocket } from "../../context/SocketContext"
-import axios from "axios"
+import API from "../../api/axios"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import LoadingSpinner from "../../components/LoadingSpinner"
@@ -24,15 +24,15 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         // Fetch client's events
-        const eventsResponse = await axios.get("/api/events")
+        const eventsResponse = await API.get("/api/events")
         setEvents(eventsResponse.data)
 
         // Fetch client's bookings
-        const bookingsResponse = await axios.get("/api/bookings")
+        const bookingsResponse = await API.get("/api/bookings")
         setBookings(bookingsResponse.data)
 
         // Fetch available vendors
-        const vendorsResponse = await axios.get("/api/vendors")
+        const vendorsResponse = await API.get("/api/vendors")
         setVendors(vendorsResponse.data)
       } catch (err) {
         console.error("Error fetching dashboard data:", err)

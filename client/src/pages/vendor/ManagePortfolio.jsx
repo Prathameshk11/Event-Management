@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { TrashIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline"
-import axios from "axios"
+import API from "../../api/axios"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import LoadingSpinner from "../../components/LoadingSpinner"
@@ -20,7 +20,7 @@ const ManagePortfolio = () => {
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
-        const response = await axios.get("/api/vendor/portfolio")
+        const response = await API.get("/api/vendor/portfolio")
         setPortfolio(response.data)
       } catch (err) {
         console.error("Error fetching portfolio:", err)
@@ -71,7 +71,7 @@ const ManagePortfolio = () => {
         formData.append("images", files[i])
       }
 
-      const response = await axios.post("/api/vendor/portfolio", formData, {
+      const response = await API.post("/api/vendor/portfolio", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -90,7 +90,7 @@ const ManagePortfolio = () => {
   const deleteImage = async (imageId) => {
     try {
       // Fixed: Use the correct endpoint and handle the response properly
-      await axios.delete(`/api/vendor/portfolio/${imageId}`)
+      await API.delete(`/api/vendor/portfolio/${imageId}`)
 
       // Update the portfolio state after successful deletion
       setPortfolio((prev) => prev.filter((img) => img._id !== imageId))

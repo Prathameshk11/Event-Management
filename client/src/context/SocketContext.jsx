@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { io } from "socket.io-client"
 import { useAuth } from "./AuthContext"
+const backendURL = import.meta.env.VITE_API_URL;
+
 
 const SocketContext = createContext()
 
@@ -25,7 +27,7 @@ export const SocketProvider = ({ children }) => {
     // Only connect if user is authenticated
     if (user) {
       const token = localStorage.getItem("token")
-      newSocket = io("http://localhost:5000", {
+      newSocket = io(backendURL, {
         auth: {
           token,
         },

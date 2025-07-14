@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext"
 import { useSocket } from "../context/SocketContext"
 import NotificationBell from "./NotificationBell"
 import ChatBox from "./ChatBox"
-import axios from "axios"
+import API from "../api/axios"
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -23,7 +23,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchActiveChats = async () => {
       try {
-        const response = await axios.get("/api/chat/active", {
+        const response = await API.get("/api/chat/active", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (Array.isArray(response.data)) {

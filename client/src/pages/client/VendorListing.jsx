@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useLocation, Link } from "react-router-dom"
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, MapPinIcon, StarIcon } from "@heroicons/react/24/outline"
-import axios from "axios"
+import API from "../../api/axios"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import LoadingSpinner from "../../components/LoadingSpinner"
@@ -85,7 +85,7 @@ const VendorListing = () => {
         }
 
         console.log("Fetching vendors...")
-        const response = await axios.get("/api/vendors")
+        const response = await API.get("/api/vendors")
         console.log("Vendors fetched:", response.data.length)
         
         if (response.data && Array.isArray(response.data)) {

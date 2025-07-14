@@ -6,7 +6,7 @@ import { BellIcon } from "@heroicons/react/24/outline"
 import { BellIcon as BellIconSolid } from "@heroicons/react/24/solid"
 import { useSocket } from "../context/SocketContext"
 import { useAuth } from "../context/AuthContext"
-import axios from "axios"
+import API from "../api/axios"
 
 const NotificationBell = () => {
   const { socket } = useSocket()
@@ -19,7 +19,7 @@ const NotificationBell = () => {
     // Fetch initial notifications
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get("/api/notifications", {
+        const response = await API.get("/api/notifications", {
           headers: { Authorization: `Bearer ${token}` },
           baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
         });
@@ -53,7 +53,7 @@ const NotificationBell = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      await axios.put(`/api/notifications/${id}/read`, null, {
+      await API.put(`/api/notifications/${id}/read`, null, {
         headers: { Authorization: `Bearer ${token}` },
         baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
       });
@@ -70,7 +70,7 @@ const NotificationBell = () => {
 
   const handleMarkAllAsRead = async () => {
     try {
-      await axios.put("/api/notifications/read-all", null, {
+      await API.put("/api/notifications/read-all", null, {
         headers: { Authorization: `Bearer ${token}` },
         baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
       });

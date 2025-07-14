@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { CheckIcon, XMarkIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/outline"
-import axios from "axios"
+import API from "../../api/axios"
 import { useSocket } from "../../context/SocketContext"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
@@ -39,7 +39,7 @@ const BookingDetails = () => {
   useEffect(() => {
     const fetchBooking = async () => {
       try {
-        const response = await axios.get(`/api/vendor/bookings/${id}`)
+        const response = await API.get(`/api/vendor/bookings/${id}`)
         setBooking(response.data)
       } catch (err) {
         console.error("Error fetching booking:", err)
@@ -220,7 +220,7 @@ const BookingDetails = () => {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      const response = await axios.put(
+      const response = await API.put(
         `${import.meta.env.VITE_API_URL}/api/vendor/bookings/${booking._id}`,
         { status: newStatus },
         {
@@ -242,7 +242,7 @@ const BookingDetails = () => {
   const openChat = async () => {
     try {
       console.log("Opening chat with client:", booking.client._id)
-      const response = await axios.get(`/api/chat/${booking.client._id}`)
+      const response = await API.get(`/api/chat/${booking.client._id}`)
       console.log("Raw chat history response:", response)
       console.log("Fetched chat history data:", response.data)
       

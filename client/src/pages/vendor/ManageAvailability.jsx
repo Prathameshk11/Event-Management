@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline"
-import axios from "axios"
+import API from "../../api/axios"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import LoadingSpinner from "../../components/LoadingSpinner"
@@ -23,7 +23,7 @@ const ManageAvailability = () => {
   useEffect(() => {
     const fetchAvailability = async () => {
       try {
-        const response = await axios.get("/api/vendor/availability")
+        const response = await API.get("/api/vendor/availability")
         setAvailability(response.data)
       } catch (err) {
         console.error("Error fetching availability:", err)
@@ -85,7 +85,7 @@ const ManageAvailability = () => {
     try {
       const dateString = selectedDate.toISOString().split("T")[0]
 
-      const response = await axios.post("/api/vendor/availability", {
+      const response = await API.post("/api/vendor/availability", {
         date: dateString,
         available: isAvailable,
         timeSlots: isAvailable ? timeSlots : [],

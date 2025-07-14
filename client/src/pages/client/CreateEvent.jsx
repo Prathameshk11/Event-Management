@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-hot-toast"
-import axios from "axios"
+import API from "../../api/axios"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 
@@ -44,7 +44,7 @@ const CreateEvent = () => {
     setIsSubmitting(true)
 
     try {
-      const response = await axios.post("/api/events", formData)
+      const response = await API.post("/api/events", formData)
       toast.success("Event created successfully!")
       navigate(`/events/${response.data._id}/edit`)
     } catch (error) {

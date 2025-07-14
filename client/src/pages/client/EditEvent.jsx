@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { PlusIcon, TrashIcon, PencilIcon, XMarkIcon } from "@heroicons/react/24/outline"
-import axios from "axios"
+import API from "../../api/axios"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import LoadingSpinner from "../../components/LoadingSpinner"
@@ -48,7 +48,7 @@ const EditEvent = () => {
     const fetchEventData = async () => {
       try {
         // Fetch event details
-        const eventResponse = await axios.get(`/api/events/${id}`)
+        const eventResponse = await API.get(`/api/events/${id}`)
         setEvent(eventResponse.data)
 
         // Set form data
@@ -64,7 +64,7 @@ const EditEvent = () => {
         })
 
         // Fetch event vendors
-        const vendorsResponse = await axios.get(`/api/events/${id}/vendors`)
+        const vendorsResponse = await API.get(`/api/events/${id}/vendors`)
         setVendors(vendorsResponse.data)
       } catch (err) {
         console.error("Error fetching event data:", err)
@@ -87,10 +87,10 @@ const EditEvent = () => {
     setIsSubmitting(true)
 
     try {
-      await axios.put(`/api/events/${id}`, formData)
+      await API.put(`/api/events/${id}`, formData)
       toast.success("Event updated successfully!")
       // Refresh event data
-      const eventResponse = await axios.get(`/api/events/${id}`)
+      const eventResponse = await API.get(`/api/events/${id}`)
       setEvent(eventResponse.data)
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to update event. Please try again.")
@@ -103,7 +103,7 @@ const EditEvent = () => {
     setIsDeleting(true)
 
     try {
-      await axios.delete(`/api/events/${id}`)
+      await API.delete(`/api/events/${id}`)
       toast.success("Event deleted successfully!")
       navigate("/client")
     } catch (error) {
@@ -115,10 +115,10 @@ const EditEvent = () => {
 
   const handleRemoveVendor = async (vendorId) => {
     try {
-      await axios.delete(`/api/events/${id}/vendors/${vendorId}`)
+      await API.delete(`/api/events/${id}/vendors/${vendorId}`)
       toast.success("Vendor removed from event")
       // Update vendors list
-      const vendorsResponse = await axios.get(`/api/events/${id}/vendors`)
+      const vendorsResponse = await API.get(`/api/events/${id}/vendors`)
       setVendors(vendorsResponse.data)
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to remove vendor. Please try again.")

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { toast } from "react-hot-toast"
 import { CheckIcon, XMarkIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/outline"
-import axios from "axios"
+import API from "../../api/axios"
 import { useSocket } from "../../context/SocketContext"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
@@ -25,7 +25,7 @@ const Bookings = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get("/api/vendor/bookings")
+        const response = await API.get("/api/vendor/bookings")
         setBookings(response.data)
       } catch (err) {
         console.error("Error fetching bookings:", err)
@@ -72,7 +72,7 @@ const Bookings = () => {
 
   const handleStatusChange = async (bookingId, status) => {
     try {
-      const response = await axios.put(`/api/vendor/bookings/${bookingId}`, { status })
+      const response = await API.put(`/api/vendor/bookings/${bookingId}`, { status })
 
       // Update local state
       setBookings((prev) => prev.map((booking) => (booking._id === bookingId ? { ...booking, status } : booking)))
@@ -88,7 +88,7 @@ const Bookings = () => {
     setCurrentChat(booking)
 
     try {
-      const response = await axios.get(`/api/chat/${booking.client._id}`)
+      const response = await API.get(`/api/chat/${booking.client._id}`)
       setMessages(response.data)
     } catch (err) {
       console.error("Error fetching chat history:", err)
