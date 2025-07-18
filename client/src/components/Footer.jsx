@@ -99,10 +99,10 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <address className="not-italic text-gray-400">
-              <p className="mb-2">123 Event Street</p>
-              <p className="mb-2">New York, NY 10001</p>
+              <p className="mb-2">YCM Road, Sant Tukaramnagar</p>
+              <p className="mb-2">Pune, MH 400118</p>
               <p className="mb-2">Email: info@eventpro.com</p>
-              <p>Phone: (123) 456-7890</p>
+              <p>Phone: +91 8421528597</p>
             </address>
           </div>
         </div>

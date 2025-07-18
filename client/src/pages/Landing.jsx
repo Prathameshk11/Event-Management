@@ -24,7 +24,7 @@ const featuredVendors = [
     category: "Photographer",
     rating: 4.9,
     image: "/images/photographer.jpg",
-    location: "New York, NY",
+    location: "Pune, Maharashtra",
   },
   {
     id: 2,
@@ -32,7 +32,7 @@ const featuredVendors = [
     category: "Venue",
     rating: 4.8,
     image: "/images/hotel-venue.jpg",
-    location: "Los Angeles, CA",
+    location: "Banglore, Karnataka",
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ const featuredVendors = [
     category: "Caterer",
     rating: 4.7,
     image: "/images/caterer.jpg",
-    location: "Chicago, IL",
+    location: "Mumbai, Maharashtra",
   },
   {
     id: 4,
@@ -48,7 +48,7 @@ const featuredVendors = [
     category: "Florist",
     rating: 4.9,
     image: "/images/florist.jpg",
-    location: "Miami, FL",
+    location: "Pune, Maharashtra",
   },
 ]
 
@@ -216,12 +216,12 @@ const Landing = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "Sarah Johnson",
+                name: "Sidharth Chaturvedi",
                 role: "Wedding Client",
                 text: "EventPro made planning our wedding so much easier! We found amazing vendors and everything went perfectly."
               },
               {
-                name: "Michael Chen",
+                name: "Mohan Lal",
                 role: "Corporate Event Planner",
                 text: "As a professional event planner, I love how EventPro streamlines vendor communication and management."
               },
