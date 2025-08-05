@@ -383,8 +383,9 @@ const Profile = () => {
 
                   <div className="mb-6">
                     <label htmlFor="priceRange" className="label">
-                      Starting Price (${formData.priceRange})
+                      Starting Price (₹{formData.priceRange.toLocaleString("en-IN")})
                     </label>
+
                     <input
                       type="range"
                       id="priceRange"
@@ -460,7 +461,7 @@ const Profile = () => {
 
                         <div>
                           <label htmlFor="packagePrice" className="label">
-                            Price ($)
+                            Price (₹)
                           </label>
                           <input
                             type="number"
@@ -501,7 +502,7 @@ const Profile = () => {
                             <div className="flex justify-between items-center mb-2">
                               <h3 className="font-semibold">{pkg.name}</h3>
                               <div className="flex items-center">
-                                <span className="font-bold">${pkg.price}</span>
+                                <span className="font-bold">₹{pkg.price}</span>
                                 <button
                                   type="button"
                                   className="ml-4 text-red-600 hover:text-red-800"

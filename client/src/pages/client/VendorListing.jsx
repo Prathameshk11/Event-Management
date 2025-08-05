@@ -180,11 +180,11 @@ const VendorListing = () => {
       // Convert price indicators to numeric values
       const getPriceValue = (priceIndicator) => {
         switch(priceIndicator) {
-          case '$': return 5000
-          case '$$': return 10000
-          case '$$$': return 15000
-          case '$$$$': return 25000
-          case '$$$$$': return 40000
+          case '₹': return 5000
+          case '₹₹': return 10000
+          case '₹₹₹': return 15000
+          case '₹₹₹₹': return 25000
+          case '₹₹₹₹₹': return 40000
           default: return 0
         }
       }
@@ -320,7 +320,7 @@ const VendorListing = () => {
                   {/* Price Range Filter */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Price Range: ${priceRange[0]} - ${priceRange[1]}
+                      Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}
                     </label>
                     <input
                       type="range"

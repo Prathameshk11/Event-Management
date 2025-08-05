@@ -1,0 +1,12 @@
+{
+  "name": "eventpro",
+  "version": "1.0.0",
+  "description": "EventPro is a powerful event management and vendor booking platform built with the MERN (MongoDB, Express, React, Node.js) stack. It allows clients to create and manage events, find and book vendors, chat in real time, and monitor all bookings and communications through modern dashboards.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

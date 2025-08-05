@@ -571,7 +571,7 @@ const VendorProfile = () => {
                     <div key={index} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="font-semibold">{pkg.name}</h3>
-                        <span className="font-bold">${pkg.price}</span>
+                        <span className="font-bold">₹{pkg.price}</span>
                       </div>
                       <p className="text-gray-600 text-sm">{pkg.description}</p>
                     </div>

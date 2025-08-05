@@ -27,7 +27,7 @@ router.post("/register", async (req, res) => {
       password,
       role,
       category,
-      location: req.body.location || "New York, NY", // Default location
+      location: req.body.location || "New York, NY", 
       description: req.body.description || "",
     })
 
