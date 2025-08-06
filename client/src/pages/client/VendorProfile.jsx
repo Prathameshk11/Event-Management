@@ -1,4 +1,3 @@
-"use client"
 
 import { CalendarIcon, ChatBubbleLeftIcon, MapPinIcon, StarIcon } from "@heroicons/react/24/outline"
 import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid"

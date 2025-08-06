@@ -1,4 +1,3 @@
-"use client"
 
 import { useState, useEffect, useRef } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
@@ -14,7 +13,7 @@ import { useAuth } from "../../context/AuthContext"
 
 const BookingDetails = () => {
   const { id } = useParams()
-  const { socket, setSocket } = useSocket()
+  const { socket, connected } = useSocket()
   const { user } = useAuth()
   const [booking, setBooking] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -103,7 +102,6 @@ const BookingDetails = () => {
       }
     })
 
-    setSocket(newSocket)
 
     return () => {
       console.log("Cleaning up socket connection")

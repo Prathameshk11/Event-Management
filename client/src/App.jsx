@@ -13,8 +13,9 @@ import VendorListing from "./pages/client/VendorListing"
 import ClientVendorProfile from "./pages/client/VendorProfile"
 import CreateEvent from "./pages/client/CreateEvent"
 import EditEvent from "./pages/client/EditEvent"
+import ClientProfile from "./pages/client/Profile"
 import ManagePortfolio from "./pages/vendor/ManagePortfolio"
-import Profile from "./pages/vendor/Profile"
+import VendorProfile from "./pages/vendor/Profile"
 import ManageAvailability from "./pages/vendor/ManageAvailability"
 import Bookings from "./pages/vendor/Bookings"
 import BookingDetails from "./pages/vendor/BookingDetails"
@@ -73,7 +74,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
+            <Route
+              path="/client/profile"
+              element={
+                <ProtectedRoute role="client">
+                  <ClientProfile />
+                </ProtectedRoute>
+              }
+            />
             {/* Vendor Routes */}
             <Route
               path="/vendor"
@@ -119,7 +127,7 @@ function App() {
               path="/vendor/profile"
               element={
                 <ProtectedRoute role="vendor">
-                  <Profile />
+                  <VendorProfile />
                 </ProtectedRoute>
               }
             />

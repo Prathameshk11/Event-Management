@@ -31,8 +31,9 @@ const server = http.createServer(app);
 // Allow multiple origins
 const allowedOrigins = [
   process.env.CLIENT_URL, 
+  "http://localhost:5173",
   "http://localhost:5174",
-  "http://127.0.0.1:5174"
+  "http://127.0.0.1:5173"
 ].filter(Boolean); 
 
 
@@ -227,6 +228,8 @@ app.use("/api/notifications", authenticateToken, notificationRoutes)
 
 // Vendor-specific routes
 app.use("/api/vendor", authenticateToken, require("./routes/vendor"))
+
+app.use("/api/client", authenticateToken, require("./routes/client"))
 
 app.use((err, req, res, next) => {
   console.error(err.stack)
