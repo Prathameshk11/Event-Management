@@ -28,7 +28,17 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ message: "Vendor not found" })
     }
 
-    res.json(vendor)
+    // Fetch portfolio images from Portfolio collection
+    const portfolioItems = await Portfolio.find({ vendor: req.params.id })
+      .sort({ createdAt: -1 })
+      .select("url caption")
+    
+    // Add portfolio URLs to vendor object
+    const vendorWithPortfolio = vendor.toObject()
+    vendorWithPortfolio.portfolio = portfolioItems.map(item => item.url)
+    vendorWithPortfolio.portfolioItems = portfolioItems // Include full portfolio data with captions
+
+    res.json(vendorWithPortfolio)
   } catch (error) {
     console.error("Get vendor error:", error)
     res.status(500).json({ message: "Server error" })

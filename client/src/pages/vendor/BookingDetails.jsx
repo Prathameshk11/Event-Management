@@ -8,7 +8,7 @@ import { useSocket } from "../../context/SocketContext"
 import Navbar from "../../components/Navbar"
 import Footer from "../../components/Footer"
 import LoadingSpinner from "../../components/LoadingSpinner"
-import io from "socket.io-client"
+
 import { useAuth } from "../../context/AuthContext"
 
 const BookingDetails = () => {
@@ -51,63 +51,7 @@ const BookingDetails = () => {
     fetchBooking()
   }, [id])
 
-  useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (!token) {
-      navigate("/login")
-      return
-    }
 
-    const newSocket = io("http://localhost:5000", {
-      auth: { token },
-    })
-
-    newSocket.on("connect", () => {
-      console.log("Socket connected successfully")
-    })
-
-    newSocket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error)
-    })
-
-    newSocket.on("message", (message) => {
-      console.log("Received message event:", message)
-      if (message.vendorId === booking?.vendor._id && message.clientId === booking?.client._id) {
-        setMessages(prev => {
-          // Check if message already exists
-          const exists = prev.some(m => m._id === message._id)
-          if (exists) {
-            console.log("Message already exists, skipping:", message._id)
-            return prev
-          }
-          console.log("Adding new message to state:", message)
-          return [...prev, message]
-        })
-      }
-    })
-
-    newSocket.on("chatMessage", (message) => {
-      console.log("Received chatMessage event:", message)
-      if (message.vendorId === booking?.vendor._id && message.clientId === booking?.client._id) {
-        setMessages(prev => {
-          // Check if message already exists
-          const exists = prev.some(m => m._id === message._id)
-          if (exists) {
-            console.log("Message already exists, skipping:", message._id)
-            return prev
-          }
-          console.log("Adding new message to state:", message)
-          return [...prev, message]
-        })
-      }
-    })
-
-
-    return () => {
-      console.log("Cleaning up socket connection")
-      newSocket.disconnect()
-    }
-  }, [booking, navigate])
 
   useEffect(() => {
     if (socket && booking) {
@@ -159,16 +103,18 @@ const BookingDetails = () => {
         }
       }
 
-      const handleChatMessage = (message) => {
+      const handleChatMessage = (data) => {
         try {
-          console.log("Received chat message:", message)
-          
+          console.log("Received chat message:", data)
+
           // Validate message structure
-          if (!message || typeof message !== 'object') {
-            console.error("Invalid chat message format:", message)
+          if (!data || typeof data !== 'object' || !data.message) {
+            console.error("Invalid chat message format:", data)
             return
           }
-          
+
+          const message = data.message
+
           if (
             message.vendorId === booking.vendor._id &&
             message.clientId === booking.client._id
@@ -179,9 +125,9 @@ const BookingDetails = () => {
               text: message.message || message.text || "",
               message: message.message || message.text || ""
             }
-            
+
             console.log("Formatted chat message:", formattedMessage)
-            
+
             setMessages(prev => {
               // Check if message already exists
               const exists = prev.some(m => m._id === message._id)
@@ -201,7 +147,7 @@ const BookingDetails = () => {
             })
           }
         } catch (err) {
-          console.error("Error handling chat message:", err, "Message:", message)
+          console.error("Error handling chat message:", err, "Data:", data)
         }
       }
 
@@ -339,6 +285,25 @@ const BookingDetails = () => {
       socket.emit("sendMessage", messageData)
 
       console.log("Message emitted via socket")
+
+      // Remove temporary message when real message arrives
+      const handleMessageSent = (message) => {
+        if (message.vendorId === vendorId && message.clientId === booking.client._id) {
+          setMessages(prev => {
+            // Remove temp message if this real message matches its content and timestamp
+            const withoutTemp = prev.filter(m => {
+              if (m._id?.toString().startsWith('temp-')) {
+                const timeDiff = Math.abs(new Date(m.timestamp) - new Date(message.timestamp))
+                return !(m.message === message.message && timeDiff < 2000)
+              }
+              return true
+            })
+            return withoutTemp
+          })
+        }
+      }
+
+      socket.once("messageSent", handleMessageSent)
 
       setNewMessage("")
       scrollToBottom()

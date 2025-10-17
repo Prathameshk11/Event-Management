@@ -1,5 +1,6 @@
 const socketIo = require("socket.io")
 const { verifyToken } = require("./utils/jwt")
+const Message = require("./models/Message")
 
 module.exports = (server) => {
   const io = socketIo(server, {
@@ -32,6 +33,37 @@ module.exports = (server) => {
 
     // Join a room based on user ID
     socket.join(socket.user.id)
+
+    // Handle sending messages
+    socket.on("sendMessage", async (messageData) => {
+      try {
+        console.log("Message received:", messageData)
+
+        // Save message to database
+        const message = new Message({
+          vendorId: messageData.vendorId,
+          clientId: messageData.clientId,
+          sender: messageData.sender,
+          message: messageData.message,
+          timestamp: new Date(messageData.timestamp),
+        })
+
+        const savedMessage = await message.save()
+        console.log("Message saved:", savedMessage._id)
+
+        // Determine recipient ID
+        const recipientId = messageData.sender === "client" ? messageData.vendorId : messageData.clientId
+
+        // Broadcast message to recipient
+        io.to(recipientId).emit("message", savedMessage)
+
+        // Also emit to sender for confirmation
+        socket.emit("messageSent", savedMessage)
+      } catch (error) {
+        console.error("Send message error:", error)
+        socket.emit("messageError", { error: "Failed to send message" })
+      }
+    })
 
     // Handle vendor updates
     socket.on("vendor:update", async (vendorData) => {
@@ -71,4 +103,4 @@ module.exports = (server) => {
   })
 
   return io
-} 
+}

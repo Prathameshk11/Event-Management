@@ -1,4 +1,3 @@
-
 import { CalendarIcon, ChatBubbleLeftIcon, MapPinIcon, StarIcon } from "@heroicons/react/24/outline"
 import { StarIcon as StarIconSolid } from "@heroicons/react/24/solid"
 import API from "../../api/axios"
@@ -112,30 +111,75 @@ const VendorProfile = () => {
 
   const handleNewMessage = (message) => {
     console.log("Received message:", message)
-    // Only add message if it's for this chat and doesn't already exist
+    // Only add message if vendor is loaded and it's for this chat
+    if (!vendor || !vendor._id) return
+
     if (
-      ((user.role === "vendor" && message.clientId === vendor._id) ||
-       (user.role === "client" && message.vendorId === vendor._id)) &&
-      !messages.some(m => m._id === message._id)
+      (user.role === "vendor" && message.clientId === vendor._id) ||
+      (user.role === "client" && message.vendorId === vendor._id)
     ) {
-      setMessages(prev => [...prev, message])
+      setMessages(prev => {
+        // Check if message already exists
+        const exists = prev.some(m => m._id === message._id || m._id === message._id?.toString())
+        if (exists) return prev
+
+        // Remove temporary message if this is the real one coming back
+        const withoutTemp = prev.filter(m => {
+          // Remove temp message if this real message matches its content and timestamp
+          if (m._id?.toString().startsWith('temp-')) { // Temporary ID
+            const timeDiff = Math.abs(new Date(m.timestamp) - new Date(message.timestamp))
+            return !(m.message === message.message && timeDiff < 2000)
+          }
+          return true
+        })
+
+        return [...withoutTemp, message]
+      })
       scrollToBottom()
     }
   }
 
   const handleChatMessage = (data) => {
     console.log("Received chat message:", data)
-    // Only add message if it's for this chat and doesn't already exist
-    if (
-      data.chatId === `${user.role === "vendor" ? user._id : vendor._id}-${user.role === "vendor" ? vendor._id : user._id}` &&
-      !messages.some(m => m._id === data.message._id)
-    ) {
-      setMessages(prev => [...prev, data.message])
+    // Only add message if vendor is loaded and it's for this chat
+    if (!vendor || !vendor._id) return
+
+    const message = data.message
+    if (!message) return
+
+    // Check if this message is for the current chat
+    if (message.vendorId === vendor._id && message.clientId === user._id) {
+      setMessages(prev => {
+        // Check if message already exists
+        const exists = prev.some(m => m._id === message._id || m._id === message._id?.toString())
+        if (exists) return prev
+
+        // Remove temporary message if this is the real one coming back
+        const withoutTemp = prev.filter(m => {
+          // Remove temp message if this real message matches its content and timestamp
+          if (m._id?.toString().startsWith('temp-')) { // Temporary ID
+            const timeDiff = Math.abs(new Date(m.timestamp) - new Date(message.timestamp))
+            return !(m.message === message.message && timeDiff < 2000)
+          }
+          return true
+        })
+
+        return [...withoutTemp, message]
+      })
       scrollToBottom()
+    } else {
+      console.log("Chat message not for current chat:", {
+        messageVendorId: message.vendorId,
+        messageClientId: message.clientId,
+        currentVendorId: vendor._id,
+        currentClientId: user._id
+      })
     }
   }
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async (e) => {
+    e.preventDefault() // CRITICAL: Prevent form submission and page reload
+
     if (!newMessage.trim()) return
 
     const messageData = {
@@ -146,11 +190,10 @@ const VendorProfile = () => {
       timestamp: new Date().toISOString(),
     }
 
-    // Add message to local state immediately
+    // Add message to local state immediately with a temporary ID
     const tempMessage = {
       ...messageData,
-      _id: Date.now().toString(), // Temporary ID
-      text: newMessage.trim(), // Add text field for backward compatibility
+      _id: `temp-${Date.now()}`, // Temporary ID with prefix
       createdAt: new Date().toISOString()
     }
     setMessages(prev => [...prev, tempMessage])
@@ -604,19 +647,23 @@ const VendorProfile = () => {
             ) : (
               <div className="space-y-4">
                 {messages.map((message, index) => {
+                  const isSender =
+                    (user.role === "vendor" && message.sender === "vendor") ||
+                    (user.role === "client" && message.sender === "client")
+
                   // Get the message content, prioritizing message field
                   const messageContent = message.message || message.text || "No message content"
-                  
+
                   return (
-                    <div key={index} className={`flex ${message.sender === "client" ? "justify-end" : "justify-start"}`}>
+                    <div key={message._id || index} className={`flex ${isSender ? "justify-end" : "justify-start"}`}>
                       <div
                         className={`max-w-xs rounded-lg px-4 py-2 ${
-                          message.sender === "client" ? "bg-indigo-600 text-white" : "bg-gray-200 text-gray-800"
+                          isSender ? "bg-indigo-600 text-white" : "bg-gray-200 text-gray-800"
                         }`}
                       >
                         <p>{messageContent}</p>
                         <p
-                          className={`text-xs mt-1 ${message.sender === "client" ? "text-indigo-200" : "text-gray-500"}`}
+                          className={`text-xs mt-1 ${isSender ? "text-indigo-200" : "text-gray-500"}`}
                         >
                           {new Date(message.timestamp).toLocaleTimeString([], {
                             hour: "2-digit",
